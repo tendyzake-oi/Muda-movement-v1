@@ -1,0 +1,206 @@
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(430px, 0.95fr);
+  background: var(--color-bg-alt);
+}
+
+.login-intro {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: clamp(2rem, 6vw, 5rem);
+  background: var(--brand-ink);
+  color: #fff;
+}
+
+.login-brand {
+  position: relative;
+  z-index: 1;
+  width: fit-content;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.login-brand span { font-weight: 500; }
+
+.login-intro__content {
+  position: relative;
+  z-index: 1;
+  max-width: 38rem;
+  margin-block: 4rem;
+}
+
+.login-eyebrow {
+  margin-bottom: 1.25rem;
+  color: var(--brand-coral);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.login-intro blockquote {
+  padding-left: 1.3rem;
+  border-left: 3px solid var(--brand-coral);
+  font-size: clamp(1.3rem, 2.2vw, 2rem);
+  line-height: 1.5;
+}
+
+.login-intro ul {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.login-intro li::before {
+  content: '✦';
+  margin-right: 0.75rem;
+  color: var(--brand-coral);
+}
+
+.login-intro__ring {
+  position: absolute;
+  right: -12rem;
+  bottom: -20rem;
+  width: 40rem;
+  aspect-ratio: 1;
+  border: 2px solid rgba(251, 191, 36, 0.34);
+  border-radius: 50%;
+}
+
+.login-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 100vh;
+  padding: 2rem clamp(1.5rem, 6vw, 6rem);
+}
+
+.login-back {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.login-back:hover, .login-home-link:hover { color: var(--color-accent); }
+
+.login-form-wrap {
+  width: min(100%, 34rem);
+  margin: auto;
+  padding-block: 3rem;
+}
+
+.login-eyebrow--blue { color: var(--color-accent); }
+
+.login-form-wrap h1 {
+  margin-bottom: 0.75rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.login-subtitle {
+  margin-bottom: 2.25rem;
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+}
+
+.login-form {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.login-form label {
+  margin-top: 0.65rem;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.login-form input {
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 1rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.login-form input:focus {
+  border-color: var(--color-accent);
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 22%, transparent);
+}
+
+.login-submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.75rem;
+  margin-top: 1rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-btn-bg);
+  box-shadow: var(--shadow-btn);
+  color: var(--color-btn-text);
+  font-weight: 700;
+}
+
+.login-submit:disabled { cursor: wait; opacity: 0.7; }
+
+.login-error {
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: var(--color-note-bg);
+  color: var(--color-note-text);
+}
+
+/* --- UBAH .login-help YANG LAMA DENGAN INI --- */
+.login-help {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+  text-align: center; /* Merapikan teks ke tengah kotak */
+}
+
+.login-home-link {
+  display: inline-block;
+  margin-top: 1.25rem;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+/* --- UBAH .login-mode-toggle YANG LAMA DENGAN INI --- */
+.login-mode-toggle {
+  display: inline; /* Mengubah dari block menjadi inline agar menyatu di dalam kalimat */
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-accent);
+  font-weight: 700;
+  font-size: inherit; /* Mengikuti ukuran font dari .login-help */
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.login-mode-toggle:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 760px) {
+  .login-page { grid-template-columns: 1fr; }
+  .login-intro { min-height: auto; padding: 2rem 1.5rem; }
+  .login-intro__content { margin-block: 3rem 1.5rem; }
+  .login-intro blockquote { font-size: 1.35rem; }
+  .login-intro ul { gap: 0.65rem; margin-top: 1.5rem; }
+  .login-panel { min-height: auto; align-items: flex-start; padding: 1.5rem; }
+  .login-form-wrap { padding-block: 3rem; }
+}

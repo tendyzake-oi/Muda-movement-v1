@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="id" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="./Assets/brands/Muda-Movement.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Muda Movement — platform inovasi pemuda Indonesia untuk learning, developing, dan empowering."
+    />
+    <title>Muda Movement — Platform Inovasi Pemuda Indonesia</title>
+
+    <!--
+      Menentukan tema SEBELUM React dimuat supaya halaman tidak
+      berkedip terang → gelap saat pertama dibuka.
+      Urutan: pilihan tersimpan → preferensi sistem → terang.
+    -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('mudamovement-theme');
+          var system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', saved === 'dark' || saved === 'light' ? saved : system);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

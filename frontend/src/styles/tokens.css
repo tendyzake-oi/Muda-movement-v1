@@ -1,0 +1,164 @@
+/* ==========================================================================
+   DESIGN TOKENS
+   Semua warna, font, dan ukuran dasar ada di sini.
+   Komponen HANYA memakai variabel semantik (--color-*), jangan kode warna
+   langsung — dengan begitu tema terang/gelap otomatis ikut berubah.
+   Tema aktif dikontrol lewat atribut  <html data-theme="light|dark">.
+   ========================================================================== */
+
+:root {
+  /* ---------- Tipografi ---------- */
+  --font-display: 'DM Sans Variable', system-ui, sans-serif;
+  --font-body: 'DM Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* ---------- Layout ---------- */
+  --gutter: clamp(1.25rem, 3.15vw, 2.7rem);
+  --container: 1216px;
+  --container-wide: 1280px;
+  --section-space: clamp(4.5rem, 8vw, 6.5rem);
+  --header-height: 5rem;
+
+  /* ---------- Radius ---------- */
+  --radius-sm: 0.875rem;
+  --radius-md: 1.25rem;
+  --radius-lg: 1.75rem;
+  --radius-xl: 2.5rem;
+  --radius-pill: 999px;
+
+  /* ---------- Warna merek (konstan di kedua tema) ---------- */
+  --brand-coral: #fbbf24;
+  --brand-amber: #f59e0b;
+  --brand-violet: #0284c7;
+  --brand-blue: #0ea5e9;
+  --brand-lavender: #bae6fd;
+  --brand-ink: #0c4a6e;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* ==========================================================================
+   TEMA TERANG (default)
+   ========================================================================== */
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  /* Permukaan */
+  --color-bg: #ffffff;
+  --color-bg-alt: #f0f9ff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f9f7f3;
+  --color-inverse-bg: #0ea5e9;
+  --color-plate-bg: #085cb1;
+  --color-footer-bg: #0ea5e9;
+
+  /* Teks */
+  --color-text: #0f172a;
+  --color-text-muted: #475569;
+  --color-text-soft: #64748b;
+  --color-text-footer: #f59e0b;
+  --color-text-inverse: #ffffff;
+  --color-text-inverse-muted: #fff9f3;
+
+  /* Garis */
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+  --color-grid: rgba(14, 165, 233, 0.09);
+  --color-dots: rgba(14, 165, 233, 0.16);
+
+  /* Aksen */
+  --color-accent: #0284c7;
+  --color-accent-label-inverse: #fbbf24;
+  --color-amber-text: #b45309;
+  --color-focus: #0ea5e9;
+
+  /* Tombol */
+  --color-btn-bg: #0284c7;
+  --color-btn-text: #ffffff;
+  --color-btn-hover: #0ea5e9;
+  --color-btn-secondary-bg: #ffffff;
+  --color-btn-secondary-text: #075985;
+  --color-btn-secondary-border: #bae6fd;
+  --shadow-btn: 0 10px 24px -8px rgba(3, 105, 161, 0.42);
+
+  /* Kotak ikon */
+  --color-tile-violet: #e0f2fe;
+  --color-tile-coral: #fef3c7;
+  --color-tile-amber: #e0f2fe;
+  --color-icon-violet: #0284c7;
+
+  /* Catatan/peringatan */
+  --color-note-bg: #fffbeb;
+  --color-note-border: #fde68a;
+  --color-note-text: #78350f;
+
+  /* Panel khusus */
+  --color-testimonial-bg: #e0f2fe;
+  --color-cta-bg: #0369a1;
+  --color-plate: #bae6fd;
+  --color-hero-card: #f0f9ff;
+  --color-nav-bg: rgba(12, 74, 110, 0.96);
+  --color-decor-ring: #fbbf24;
+
+  /* Bayangan */
+  --shadow-card: 0 24px 60px -30px rgba(12, 74, 110, 0.24);
+  --shadow-hero: 0 40px 80px -40px rgba(12, 74, 110, 0.55);
+}
+
+/* ==========================================================================
+   TEMA GELAP
+   ========================================================================== */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-bg: #071927;
+  --color-bg-alt: #0b2234;
+  --color-surface: #103149;
+  --color-surface-muted: #0c2c44;
+  --color-inverse-bg: #061521;
+  --color-footer-bg: #061521;
+
+  --color-text: #f8fafc;
+  --color-text-muted: #cbd5e1;
+  --color-text-soft: #94a3b8;
+  --color-text-inverse: #ffffff;
+  --color-text-inverse-muted: #b9b5d6;
+
+  --color-border: #1e4058;
+  --color-border-strong: #315b75;
+  --color-grid: rgba(56, 189, 248, 0.07);
+  --color-dots: rgba(56, 189, 248, 0.14);
+
+  --color-accent: #38bdf8;
+  --color-accent-label-inverse: #fbbf24;
+  --color-amber-text: #fbbf24;
+  --color-focus: #38bdf8;
+
+  --color-btn-bg: #0284c7;
+  --color-btn-text: #ffffff;
+  --color-btn-hover: #0ea5e9;
+  --color-btn-secondary-bg: #103149;
+  --color-btn-secondary-text: #f8fafc;
+  --color-btn-secondary-border: #315b75;
+  --shadow-btn: 0 10px 28px -8px rgba(2, 132, 199, 0.6);
+
+  --color-tile-violet: #103c57;
+  --color-tile-coral: #493b1d;
+  --color-tile-amber: #103c57;
+  --color-icon-violet: #7dd3fc;
+
+  --color-note-bg: #342b17;
+  --color-note-border: #6b521f;
+  --color-note-text: #fde68a;
+
+  --color-testimonial-bg: #0c2c44;
+  --color-cta-bg: #075985;
+  --color-plate: #123f5b;
+  --color-hero-card: #103149;
+  --color-nav-bg: rgba(6, 21, 33, 0.96);
+  --color-decor-ring: #b7791f;
+
+  --shadow-card: 0 24px 60px -30px rgba(0, 0, 0, 0.55);
+  --shadow-hero: 0 40px 80px -40px rgba(0, 0, 0, 0.75);
+}
