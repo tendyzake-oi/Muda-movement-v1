@@ -153,7 +153,7 @@ export const contact = {
     { icon : 'mail', tone: 'violet', label: 'Email', value: 'info@mudamovement.com', subject: 'Tanya Program Muda Movement', body: 'Halo tim Muda Movement, saya tertarik untuk mengetahui lebih lanjut mengenai...' },
     { icon: 'whatsapp', tone: 'amber', label: 'WhatsApp', value: '6282315581944', text: 'Halo Muda Movement, saya ingin bertanya tentang program dan kolaborasi.' },
     { icon: 'instagram', tone: 'coral', label: 'instagram', value: 'mudamovement' },
-    { icon: 'website', tone: 'violet', label: 'Website', value: 'Dashboard' },
+    { icon: 'website', tone: 'violet', label: 'Website', value: 'https://muda-movement-v1.vercel.app' },
   ],
   // Data FAQ Baru
   faqs: [
