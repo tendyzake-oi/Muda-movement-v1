@@ -3,7 +3,10 @@ import express from 'express'
 import { checkDatabaseConnection } from './config/database.js'
 import authRoutes from './routes/authRoutes.js'
 
-const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+const allowedOrigins = (
+  process.env.CORS_ORIGIN
+  || 'http://localhost:5173,https://muda-movement-v1.vercel.app'
+)
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean)

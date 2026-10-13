@@ -78,8 +78,7 @@ export async function requestPasswordReset(req, res) {
   if (rows[0]) {
     const token = randomBytes(32).toString('hex')
     const tokenHash = createHash('sha256').update(token).digest('hex')
-    const frontendUrl = process.env.FRONTEND_URL
-    if (!frontendUrl) throw new Error('FRONTEND_URL belum dikonfigurasi.')
+    const frontendUrl = process.env.FRONTEND_URL || 'https://muda-movement-v1.vercel.app'
     const resetUrl = new URL('/reset-password', frontendUrl)
     resetUrl.searchParams.set('token', token)
 
