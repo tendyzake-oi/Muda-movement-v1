@@ -9,35 +9,37 @@ export default async function authMiddleware(req, res, next) {
     return res.status(401).json({ error: 'Token autentikasi diperlukan.' })
   }
 
+  let payload
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET, {
+    payload = jwt.verify(token, process.env.JWT_SECRET, {
       algorithms: ['HS256'],
       issuer: 'muda-movement',
     })
-    if (typeof payload !== 'object' || typeof payload.sub !== 'string') {
-      return res.status(401).json({ error: 'Token autentikasi tidak valid.' })
-    }
-    if (
-      payload.sessionVersion !== undefined
-      && (!Number.isInteger(payload.sessionVersion) || payload.sessionVersion < 0)
-    ) {
-      return res.status(401).json({ error: 'Token autentikasi tidak valid.' })
-    }
-
-    const [rows] = await pool.execute(
-      'SELECT session_version FROM users WHERE id = ? LIMIT 1',
-      [payload.sub],
-    )
-    if (
-      !rows[0]
-      || Number(rows[0].session_version) !== (payload.sessionVersion ?? 0)
-    ) {
-      return res.status(401).json({ error: 'Sesi tidak lagi valid. Silakan masuk kembali.' })
-    }
-
-    req.userId = payload.sub
-    return next()
   } catch {
     return res.status(401).json({ error: 'Sesi tidak valid atau sudah kedaluwarsa. Silakan masuk kembali.' })
   }
+
+  if (typeof payload !== 'object' || payload === null || typeof payload.sub !== 'string') {
+    return res.status(401).json({ error: 'Token autentikasi tidak valid.' })
+  }
+  if (
+    payload.sessionVersion !== undefined
+    && (!Number.isInteger(payload.sessionVersion) || payload.sessionVersion < 0)
+  ) {
+    return res.status(401).json({ error: 'Token autentikasi tidak valid.' })
+  }
+
+  const [rows] = await pool.execute(
+    'SELECT session_version FROM users WHERE id = ? LIMIT 1',
+    [payload.sub],
+  )
+  if (
+    !rows[0]
+    || Number(rows[0].session_version) !== (payload.sessionVersion ?? 0)
+  ) {
+    return res.status(401).json({ error: 'Sesi tidak lagi valid. Silakan masuk kembali.' })
+  }
+
+  req.userId = payload.sub
+  return next()
 }

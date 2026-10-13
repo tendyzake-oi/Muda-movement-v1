@@ -1,5 +1,6 @@
 import cors from 'cors'
 import express from 'express'
+import { checkDatabaseConnection } from './config/database.js'
 import authRoutes from './routes/authRoutes.js'
 
 const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
@@ -24,8 +25,19 @@ app.use(cors({
 }))
 app.use(express.json({ limit: '10kb' }))
 
-app.get('/healthz', (_req, res) => {
+app.get(['/healthz', '/api/healthz'], (_req, res) => {
   res.json({ status: 'ok' })
+})
+
+app.get(['/healthz/database', '/api/healthz/database'], async (_req, res) => {
+  try {
+    await checkDatabaseConnection()
+    return res.json({ status: 'ok', database: 'connected' })
+  } catch (error) {
+    const code = typeof error?.code === 'string' ? error.code : error?.name || 'UNKNOWN'
+    console.error(`Pemeriksaan database gagal (${code}).`)
+    return res.status(503).json({ status: 'error', database: 'unavailable' })
+  }
 })
 
 app.get('/api/config', (_req, res) => {
@@ -42,7 +54,10 @@ app.use((error, _req, res, _next) => {
   const status = Number.isInteger(error.status) && error.status >= 400 && error.status < 600
     ? error.status
     : 500
-  if (status === 500) console.error('Kesalahan server:', error)
+  if (status === 500) {
+    const code = typeof error?.code === 'string' ? error.code : error?.name || 'UNKNOWN'
+    console.error(`Kesalahan server (${code}).`)
+  }
   res.status(status).json({
     error: status === 500 ? 'Terjadi kesalahan pada server.' : error.message,
   })

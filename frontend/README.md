@@ -80,42 +80,48 @@ nama, email, peran `user`, dan tanggal bergabung—tidak pernah `password_hash`.
 Di dashboard, permintaan reset password dikirim ke email akun sehingga tidak
 meminta password lama; pastikan email tersebut dapat diakses.
 
-### Deployment (Vercel + backend Node + TiDB Cloud)
+### Deployment (Vercel + TiDB Cloud)
 
-Frontend Vite/React di-deploy ke Vercel. Backend ini adalah server Express
-berumur panjang (menggunakan `app.listen()`), jadi deploy folder `backend`
-sebagai Render Web Service terpisah; jangan
-deploy folder backend sebagai static site Vercel tanpa mengubahnya menjadi
-serverless functions.
+Frontend Vite/React dan backend Express dapat di-deploy sebagai dua project
+Vercel terpisah dari repository yang sama. Backend mengekspor aplikasi Express
+untuk Vercel Functions; `npm start` tetap menjalankan server lokal dengan
+`app.listen()`.
 
 Sebelum deploy:
 
 1. Siapkan cluster dan database di TiDB Cloud, lalu jalankan
    `backend/sql/setup.sql` di database tersebut. Pastikan tabel `users` dan
    `password_reset_tokens` sudah ada.
-2. Di Render, buat **Web Service** dari repository yang sama dengan root
-   directory `backend`, build command `npm install`, dan start command
-   `npm start`. Service harus menerima port dari `PORT` yang disediakan Render.
-3. Tambahkan environment variables backend di dashboard hosting:
+2. Di Vercel, buat project backend dari repository yang sama dan atur **Root
+   Directory** ke `backend`. Gunakan framework Express dan install command
+   `npm install` (tidak perlu build command khusus).
+3. Tambahkan environment variables backend di Vercel Project Settings:
    `NODE_ENV=production`, `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`,
    `DB_NAME`, `DB_SSL=true`, `JWT_SECRET` (acak, minimal 32 karakter),
    `CORS_ORIGIN` (origin Vercel frontend), `FRONTEND_URL` (alamat frontend
    Vercel), `WHATSAPP_GROUP_URL`, serta konfigurasi `SMTP_HOST`, `SMTP_PORT`,
    `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, dan `SMTP_FROM`.
-   Simpan rahasia hanya di dashboard hosting; jangan taruh rahasia di frontend,
-   Vercel, atau repository.
-4. Atur izin jaringan TiDB agar menerima koneksi dari backend hosting. Jika
+   Simpan rahasia di Environment Variables project backend Vercel; jangan
+   masukkan rahasia ke source frontend atau repository.
+4. `DB_SSL_CA` opsional untuk CA PEM jika cluster mensyaratkannya. Koneksi
+   `DB_SSL=true` memverifikasi sertifikat server dan menggunakan TLS minimal
+   1.2; jangan menonaktifkan verifikasi untuk mengatasi masalah koneksi.
+   Atur izin jaringan TiDB agar menerima koneksi dari backend hosting. Jika
    platform menyediakan outbound IP statis, batasi allowlist TiDB ke IP itu;
    jangan membuka akses database ke semua alamat jika bisa dihindari.
-5. Deploy backend, lalu tes `https://<domain-backend>/healthz` sampai mendapat
-   respons `{"status":"ok"}`.
+5. Deploy backend dengan `cd backend` lalu `npx vercel --prod`. Tes
+   `https://<domain-backend>/api/healthz` sampai mendapat respons
+   `{"status":"ok"}`. Tes koneksi TiDB secara terpisah melalui
+   `GET /api/healthz/database`; sukses memberi
+   `{"status":"ok","database":"connected"}`, sedangkan database yang belum
+   tersedia memberi HTTP 503 tanpa mematikan health check dasar.
 6. Di Vercel, import repository dan pilih root directory `frontend`
    (framework Vite, build command `npm run build`, output directory `dist`).
-   Set `VITE_API_URL` ke origin backend (misalnya
-   `https://<domain-backend>`, tanpa `/api` dan tanpa slash di akhir) sebelum
-   deploy. Rewrite Vercel untuk route SPA sudah disediakan di `vercel.json`;
-   selama development lokal variabel ini boleh kosong karena proxy Vite tetap
-   digunakan.
+   Isi `VITE_API_URL` dengan origin backend (tanpa `/api` dan tanpa slash di
+   akhir); bila kosong pada build production, frontend memakai origin backend
+   production yang ditetapkan di `frontend/src/services/auth.js`. Rewrite Vercel
+   untuk route SPA sudah disediakan di `vercel.json`; selama development lokal
+   variabel ini boleh kosong karena proxy Vite tetap digunakan.
 7. Tes daftar akun, login, refresh halaman `/dashboard`, ubah profil, serta alur
    reset password dan tautan email. Pastikan `FRONTEND_URL` menunjuk domain
    frontend produksi agar tautan reset kembali ke situs yang benar.
@@ -123,9 +129,13 @@ Sebelum deploy:
 Backend tidak boleh menerima `CORS_ORIGIN=http://localhost:5173` saja di
 production. Isi dengan origin persis frontend Vercel (tanpa path), dan tambahkan
 origin preview hanya jika memang dibutuhkan. `JWT_SECRET` wajib unik dan kuat;
-server sekarang berhenti saat secret tidak ada atau kurang dari 32 karakter.
+server lokal menolak secret yang tidak ada atau kurang dari 32 karakter.
 Gunakan `.env.example` sebagai referensi lokal, bukan sebagai tempat menyimpan
 credential produksi.
+
+Backend ini belum menyediakan `GET /api/news`; bagian berita frontend
+memerlukan API berita tersendiri yang mengembalikan format data yang digunakan
+komponen berita. Health check dan tes autentikasi tidak memvalidasi fitur berita.
 
 ## Susunan halaman
 

@@ -1,4 +1,6 @@
-const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '')
+const productionApiUrl = 'https://muda-movement-v1-backend.vercel.app'
+const apiBaseUrl = (import.meta.env.VITE_API_URL || (import.meta.env.PROD ? productionApiUrl : ''))
+  .replace(/\/+$/, '')
 
 async function request(path, options = {}) {
   const response = await fetch(`${apiBaseUrl}${path}`, {
