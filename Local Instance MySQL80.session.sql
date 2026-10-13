@@ -1,9 +1,10 @@
--- Jalankan file ini pada koneksi SQL TiDB Cloud yang memiliki izin membuat database.
-CREATE DATABASE IF NOT EXISTS muda_movement
+-- Jalankan file ini pada MySQL 8+ atau TiDB dengan izin membuat database.
+
+CREATE DATABASE IF NOT EXISTS Muda_movement
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE muda_movement;
+USE Muda_movement;
 
 CREATE TABLE IF NOT EXISTS users (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,

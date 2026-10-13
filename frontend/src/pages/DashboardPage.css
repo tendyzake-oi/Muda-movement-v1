@@ -82,6 +82,15 @@
 
 .member-mini-profile strong, .member-mini-profile small { display: block; }
 .member-mini-profile small { margin-top: 0.1rem; color: rgba(255, 255, 255, 0.7); }
+.member-mini-profile__identity { flex: 1 1 auto; min-width: 0; }
+.member-mini-profile__identity strong {
+  display: -webkit-box;
+  overflow: hidden;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
 
 .member-avatar {
   display: grid;
@@ -161,8 +170,18 @@
 
 .member-card__heading {
   display: flex;
+  min-width: 0;
   align-items: center;
   gap: 1rem;
+}
+
+.member-card__identity { min-width: 0; }
+.member-card__identity h2 {
+  display: -webkit-box;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .member-avatar--large { width: 3.5rem; font-size: 1.3rem; }
@@ -198,6 +217,13 @@
   margin-top: 1.25rem;
   color: var(--color-text-soft);
   font-size: 0.9rem;
+}
+
+.member-security-help {
+  margin-top: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .member-form {

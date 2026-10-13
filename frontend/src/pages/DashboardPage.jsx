@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import useAuth from '../auth/useAuth'
 import ThemeToggle from '../components/layout/ThemeToggle'
+import PasswordInput from '../components/ui/PasswordInput'
 import {
   deleteAccount as deleteAccountRequest,
   fetchPublicConfig,
-  updatePassword as updatePasswordRequest,
+  requestPasswordReset,
   updateProfile as updateProfileRequest,
 } from '../services/auth'
 import './DashboardPage.css'
@@ -16,9 +17,6 @@ export default function DashboardPage() {
   const [configError, setConfigError] = useState('')
   const [name, setName] = useState(user.name)
   const [email, setEmail] = useState(user.email)
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmNewPassword, setConfirmNewPassword] = useState('')
   const [deletePassword, setDeletePassword] = useState('')
   const [profileMessage, setProfileMessage] = useState('')
   const [passwordMessage, setPasswordMessage] = useState('')
@@ -33,7 +31,7 @@ export default function DashboardPage() {
     let active = true
     fetchPublicConfig()
       .then((config) => {
-        if (active) setWhatsappUrl(config.whatsappGroupUrl || 'https://chat.whatsapp.com/HkE7JgcrOfF5B5J6ZrTdNc')
+        if (active) setWhatsappUrl(config.whatsappGroupUrl || 'https://chat.whatsapp.com/LVdBfFZW3l24FqJSHHOtzb')
       })
       .catch((error) => {
         if (active) setConfigError(error.message)
@@ -68,17 +66,10 @@ export default function DashboardPage() {
     event.preventDefault()
     setPasswordError('')
     setPasswordMessage('')
-    if (newPassword !== confirmNewPassword) {
-      setPasswordError('Konfirmasi password baru tidak cocok.')
-      return
-    }
     setSavingPassword(true)
     try {
-      const result = await updatePasswordRequest(token, currentPassword, newPassword)
+      const result = await requestPasswordReset(user.email)
       setPasswordMessage(result.message)
-      setCurrentPassword('')
-      setNewPassword('')
-      setConfirmNewPassword('')
     } catch (error) {
       setPasswordError(error.message)
     } finally {
@@ -118,7 +109,9 @@ export default function DashboardPage() {
         <div className="member-sidebar__bottom">
           <div className="member-mini-profile">
             <span className="member-avatar">{initial}</span>
-            <span><strong>{user.name}</strong><small>Member</small></span>
+            <span className="member-mini-profile__identity" title={user.name}>
+              <strong>{user.name}</strong><small>Member</small>
+            </span>
           </div>
           <button type="button" className="member-logout" onClick={logout}>↪ <span>Keluar</span></button>
         </div>
@@ -139,7 +132,10 @@ export default function DashboardPage() {
             <section className="member-card member-card--profile">
               <div className="member-card__heading">
                 <span className="member-avatar member-avatar--large">{initial}</span>
-                <div><p className="member-eyebrow">Informasi akun</p><h2>{user.name}</h2></div>
+                <div className="member-card__identity">
+                  <p className="member-eyebrow">Informasi akun</p>
+                  <h2 title={user.name}>{user.name}</h2>
+                </div>
               </div>
               <p className="member-joined">Member sejak {joinedAt}</p>
               <form className="member-form" onSubmit={handleProfileSubmit}>
@@ -172,43 +168,14 @@ export default function DashboardPage() {
             <section className="member-card member-card--password">
               <p className="member-eyebrow">Keamanan</p>
               <h2>Ubah password</h2>
+              <p className="member-security-help">
+                Kami akan mengirim tautan reset sekali pakai ke <strong>{user.email}</strong>. Anda tidak perlu mengingat password lama.
+              </p>
               <form className="member-form" onSubmit={handlePasswordSubmit}>
-                <label htmlFor="current-password">Password saat ini</label>
-                <input
-                  id="current-password"
-                  type="password"
-                  autoComplete="current-password"
-                  value={currentPassword}
-                  onChange={(event) => setCurrentPassword(event.target.value)}
-                  maxLength={72}
-                  required
-                />
-                <label htmlFor="new-password">Password baru</label>
-                <input
-                  id="new-password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={newPassword}
-                  onChange={(event) => setNewPassword(event.target.value)}
-                  minLength={8}
-                  maxLength={72}
-                  required
-                />
-                <label htmlFor="confirm-new-password">Konfirmasi password baru</label>
-                <input
-                  id="confirm-new-password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={confirmNewPassword}
-                  onChange={(event) => setConfirmNewPassword(event.target.value)}
-                  minLength={8}
-                  maxLength={72}
-                  required
-                />
                 {passwordError && <p className="member-form-message is-error" role="alert">{passwordError}</p>}
                 {passwordMessage && <p className="member-form-message is-success" role="status">{passwordMessage}</p>}
                 <button className="member-action-button" type="submit" disabled={savingPassword}>
-                  {savingPassword ? 'Memproses...' : 'Ganti password'}
+                  {savingPassword ? 'Mengirim tautan...' : 'Kirim tautan reset'}
                 </button>
               </form>
             </section>
@@ -251,10 +218,10 @@ export default function DashboardPage() {
               </div>
               <form className="member-form" onSubmit={handleDeleteSubmit}>
                 <label htmlFor="delete-password">Konfirmasi dengan password Anda</label>
-                <input
+                <PasswordInput
                   id="delete-password"
-                  type="password"
                   autoComplete="current-password"
+                  aria-label="Konfirmasi password Anda"
                   value={deletePassword}
                   onChange={(event) => setDeletePassword(event.target.value)}
                   maxLength={72}

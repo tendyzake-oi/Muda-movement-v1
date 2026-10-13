@@ -3,26 +3,21 @@
  * Ingin mengganti kata-kata, nama proyek, atau kontak? Edit file ini saja —
  * tidak perlu membuka komponen.
  */
-import logoimg from '../../Assets/brands/Muda-Movement.png'
+
 import Beasiswa from '../../Assets/Project/Beasiswa.jpg'
 import Leadership from '../../Assets/Project/Leadership.jpg'
 import LearningCamp from '../../Assets/Project/Learning.jpg'
 import Sahabat from '../../Assets/Project/Sahabat.jpg'
 import herologo from '../../Assets/Navbar/Muda-Movement-putih.png'
 import academyLogo from '../../Assets/brands/Mooda-Academy.png'
-import learningCampLogo from '../../Assets/brands/Learning-Camp.png'
-import ngampusLogo from '../../Assets/brands/Ngampus-bareng.png'
-import pemimpinMudaLogo from '../../Assets/brands/Sekolah-Pemimpin-Muda.png'
 import trainingEventPhoto from '../../Assets/events/Upgrading.png'
 import Workshop from '../../Assets/events/Workshop.png'
 import MudaColaboration from '../../Assets/events/Muda-Colaboration.png'
 import Monitoring from '../../Assets/events/Monitoring.png'
-import umkmEventPhoto from '../../Assets/events/produksi-umkm.jpg'
 import Mudainternship from '../../Assets/Program/Muda-Internship.png'
 import futurebox from '../../Assets/Program/Future-Box.png'
 import Mudakolaborasi from '../../Assets/Program/Muda-collaboration.jpg'
-import communityEventPhoto from '../../Assets/events/lokakarya-komunitas.jpeg'
-import collaborationEventPhoto from '../../Assets/Dashboard.jpeg'
+
 
 export const brand = {
   name: 'Muda Movement',
@@ -153,7 +148,7 @@ export const contact = {
     { icon : 'mail', tone: 'violet', label: 'Email', value: 'info@mudamovement.com', subject: 'Tanya Program Muda Movement', body: 'Halo tim Muda Movement, saya tertarik untuk mengetahui lebih lanjut mengenai...' },
     { icon: 'whatsapp', tone: 'amber', label: 'WhatsApp', value: '6282315581944', text: 'Halo Muda Movement, saya ingin bertanya tentang program dan kolaborasi.' },
     { icon: 'instagram', tone: 'coral', label: 'instagram', value: 'mudamovement' },
-    { icon: 'website', tone: 'violet', label: 'Website', value: 'https://muda-movement-v1.vercel.app' },
+    { icon: 'website', tone: 'violet', label: 'Website', value: 'Dashboard' },
   ],
   // Data FAQ Baru
   faqs: [

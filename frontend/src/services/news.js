@@ -1,15 +1,19 @@
-const API_URL = import.meta.env.VITE_API_URL;
+const apiBaseUrl = (import.meta.env.VITE_NEWS_API_URL || 'https://kreatifest.vercel.app/').replace(/\/$/, '')
 
-export async function getEvents() {
-  const response = await fetch(
-    `${API_URL}/api/events`
-  );
+/**
+ * Selalu meminta data terbaru: `cache: 'no-store'` menembus cache HTTP browser,
+ * header `Cache-Control: no-cache` juga menembus cache proxy/CDN di tengah jalan.
+ */
+export async function fetchLatestNews(signal) {
+  const response = await fetch(`${apiBaseUrl}/api/news?limit=6`, {
+    signal,
+    cache: 'no-store',
+    headers: import.meta.env.DEV ? { 'Cache-Control': 'no-cache' } : {},
+  })
 
   if (!response.ok) {
-    throw new Error(
-      `API gagal: ${response.status}`
-    );
+    throw new Error('Berita belum dapat dimuat. Coba lagi sebentar.')
   }
 
-  return response.json();
+  return response.json()
 }

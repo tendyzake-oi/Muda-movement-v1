@@ -1,5 +1,7 @@
+const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '')
+
 async function request(path, options = {}) {
-  const response = await fetch(path, {
+  const response = await fetch(`${apiBaseUrl}${path}`, {
     ...options,
     headers: {
       ...(options.body ? { 'Content-Type': 'application/json' } : {}),
@@ -36,6 +38,20 @@ export function register(name, email, password) {
   return request('/api/auth/register', {
     method: 'POST',
     body: JSON.stringify({ name, email, password }),
+  })
+}
+
+export function requestPasswordReset(email) {
+  return request('/api/auth/password-reset/request', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  })
+}
+
+export function resetPassword(token, password) {
+  return request('/api/auth/password-reset/confirm', {
+    method: 'POST',
+    body: JSON.stringify({ token, password }),
   })
 }
 

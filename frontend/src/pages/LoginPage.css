@@ -160,7 +160,15 @@
   color: var(--color-note-text);
 }
 
-/* --- UBAH .login-help YANG LAMA DENGAN INI --- */
+.login-success {
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: var(--color-tile-violet);
+  color: var(--color-text);
+}
+
+.login-submit--link { text-decoration: none; }
+
 .login-help {
   margin-top: 1.5rem;
   padding: 1rem;
@@ -177,7 +185,6 @@
   font-weight: 700;
 }
 
-/* --- UBAH .login-mode-toggle YANG LAMA DENGAN INI --- */
 .login-mode-toggle {
   display: inline; /* Mengubah dari block menjadi inline agar menyatu di dalam kalimat */
   margin-top: 0;

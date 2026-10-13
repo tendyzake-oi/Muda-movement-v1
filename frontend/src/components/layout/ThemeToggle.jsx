@@ -17,8 +17,14 @@ export default function ThemeToggle() {
       onClick={toggleTheme}
       aria-label={label}
       title={label}
+      role="switch"
+      aria-checked={isDark}
     >
-      <Icon name={isDark ? 'sun' : 'moon'} size={20} />
+      <span className="theme-toggle__track" aria-hidden="true">
+        <span className="theme-toggle__thumb">
+          <Icon name={isDark ? 'sun' : 'moon'} size={15} />
+        </span>
+      </span>
     </button>
   )
 }

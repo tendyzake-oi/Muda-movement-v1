@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from '../auth/useAuth'
+import { requestPasswordReset } from '../services/auth'
+import PasswordInput from '../components/ui/PasswordInput'
 import './LoginPage.css'
 
 const benefits = [
@@ -18,8 +20,10 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [resetNotice, setResetNotice] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const isRegistering = mode === 'register'
+  const isForgotPassword = mode === 'forgot'
 
   if (loading) return <main className="auth-state" role="status">Memeriksa sesi Anda...</main>
   if (user) return <Navigate to="/dashboard" replace />
@@ -29,12 +33,15 @@ export default function LoginPage() {
     setError('')
     setSubmitting(true)
     try {
-      if (isRegistering) {
+      if (isForgotPassword) {
+        const result = await requestPasswordReset(email.trim())
+        setResetNotice(result.message)
+      } else if (isRegistering) {
         await register(name.trim(), email.trim(), password)
       } else {
         await login(email.trim(), password)
       }
-      navigate(destination, { replace: true })
+      if (!isForgotPassword) navigate(destination, { replace: true })
     } catch (loginError) {
       setError(loginError.message)
     } finally {
@@ -67,11 +74,17 @@ export default function LoginPage() {
         <Link to="/" className="login-back">← Kembali ke beranda</Link>
         <div className="login-form-wrap">
           <p className="login-eyebrow login-eyebrow--blue">Dashboard member</p>
-          <h1>{isRegistering ? 'Daftar Akun Baru' : 'Selamat Datang Kembali'}</h1>
+          <h1>
+            {isForgotPassword
+              ? 'Lupa Password?'
+              : isRegistering ? 'Daftar Akun Baru' : 'Selamat Datang Kembali'}
+          </h1>
           <p className="login-subtitle">
-            {isRegistering
-              ? 'Buat akun member MUDA Movement dan langsung masuk ke dashboard.'
-              : 'Masuk untuk mengelola akun Anda di Muda Movement.'}
+            {isForgotPassword
+              ? 'Masukkan email akun Anda. Kami akan mengirim tautan untuk mengatur ulang password.'
+              : isRegistering
+                ? 'Buat akun member MUDA Movement dan langsung masuk ke dashboard.'
+                : 'Masuk untuk mengelola akun Anda di Muda Movement.'}
           </p>
 
           <form className="login-form" onSubmit={handleSubmit}>
@@ -104,57 +117,89 @@ export default function LoginPage() {
               required
             />
 
-            <label htmlFor="login-password">Password</label>
-            <input
-              id="login-password"
-              type="password"
-              name="password"
-              autoComplete={isRegistering ? 'new-password' : 'current-password'}
-              placeholder={isRegistering ? 'Minimal 8 karakter' : 'Masukkan password'}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              minLength={isRegistering ? 8 : undefined}
-              maxLength={72}
-              required
-            />
+            {!isForgotPassword && (
+              <>
+                <label htmlFor="login-password">Password</label>
+                <PasswordInput
+                  id="login-password"
+                  name="password"
+                  autoComplete={isRegistering ? 'new-password' : 'current-password'}
+                  placeholder={isRegistering ? 'Minimal 8 karakter' : 'Masukkan password'}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  minLength={isRegistering ? 8 : undefined}
+                  maxLength={72}
+                  required
+                />
+              </>
+            )}
 
             {error && <p className="login-error" role="alert">{error}</p>}
+            {resetNotice && <p className="login-success" role="status">{resetNotice}</p>}
             <button className="login-submit" type="submit" disabled={submitting}>
-              {submitting
-                ? 'Memproses...'
+              {submitting ? 'Memproses...' : isForgotPassword
+                ? 'Kirim tautan reset'
                 : isRegistering ? 'Daftar dan masuk' : 'Masuk ke dashboard'}
               <span aria-hidden="true">→</span>
             </button>
           </form>
 
-          {/* Ganti bagian pesan help & toggle mode dengan ini */}
           <p className="login-help">
-            {isRegistering ? (
-            <>
-              Sudah punya akun?{' '}
+            {isForgotPassword ? (
+              <>
+                Ingat password?{' '}
                 <button
                   className="login-mode-toggle"
                   type="button"
                   onClick={() => {
-                  setMode('login')
-                  setError('')
+                    setMode('login')
+                    setError('')
+                    setResetNotice('')
                   }}
                 >
-                Masuk di sini
+                  Kembali ke login
                 </button>
               </>
-              ) : (
+            ) : isRegistering ? (
               <>
-              Belum punya akun?{' '}
+                Sudah punya akun?{' '}
                 <button
-                className="login-mode-toggle"
-                type="button"
-                onClick={() => {
-                setMode('register')
-                setError('')
-                }}
+                  className="login-mode-toggle"
+                  type="button"
+                  onClick={() => {
+                    setMode('login')
+                    setError('')
+                    setResetNotice('')
+                  }}
                 >
-                Daftar di sini
+                  Masuk di sini
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className="login-mode-toggle"
+                  type="button"
+                  onClick={() => {
+                    setMode('forgot')
+                    setError('')
+                    setResetNotice('')
+                  }}
+                >
+                  Lupa password?
+                </button>
+                <span aria-hidden="true"> · </span>
+                Belum punya akun?{' '}
+                <button
+                  className="login-mode-toggle"
+                  type="button"
+                  onClick={() => {
+                    setMode('register')
+                    setError('')
+                    setResetNotice('')
+                  }}
+                >
+                  Daftar di sini
                 </button>
               </>
             )}
