@@ -36,6 +36,24 @@ function isDatabaseError(error) {
     || ['ECONNREFUSED', 'ECONNRESET', 'ETIMEDOUT', 'EHOSTUNREACH', 'ENETUNREACH', 'ENOTFOUND'].includes(code)
 }
 
+export function classifyDatabaseFailure(error) {
+  const code = typeof error?.code === 'string' ? error.code : ''
+  const message = typeof error?.message === 'string' ? error.message : ''
+
+  if (code === 'DATABASE_CONFIG_ERROR') return 'configuration'
+  if (code === 'DATABASE_SCHEMA_ERROR' || code === 'ER_NO_SUCH_TABLE') return 'schema'
+  if (code === 'ER_ACCESS_DENIED_ERROR') return 'credentials'
+  if (code === 'ER_BAD_DB_ERROR') return 'database-name'
+  if (['ENOTFOUND', 'EAI_AGAIN'].includes(code)) return 'dns'
+  if (['ETIMEDOUT', 'PROTOCOL_SEQUENCE_TIMEOUT'].includes(code)) return 'network-timeout'
+  if (['ECONNREFUSED', 'ECONNRESET', 'EHOSTUNREACH', 'ENETUNREACH'].includes(code)) {
+    return 'network-access'
+  }
+  if (/TLS|SSL|CERT/i.test(code) || /TLS|SSL|certificate/i.test(message)) return 'tls'
+  if (code.startsWith('PROTOCOL_')) return 'protocol'
+  return 'unknown'
+}
+
 app.disable('x-powered-by')
 app.use(cors({
   origin(origin, callback) {
@@ -61,7 +79,11 @@ app.get(['/healthz/database', '/api/healthz/database'], async (_req, res) => {
     return res.json({ status: 'ok', database: 'connected' })
   } catch (error) {
     logServerError('Pemeriksaan database gagal', error)
-    return res.status(503).json({ status: 'error', database: 'unavailable' })
+    return res.status(503).json({
+      status: 'error',
+      database: 'unavailable',
+      reason: classifyDatabaseFailure(error),
+    })
   }
 })
 

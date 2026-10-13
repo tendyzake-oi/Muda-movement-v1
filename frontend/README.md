@@ -123,7 +123,10 @@ Sebelum deploy:
    `{"status":"ok","database":"connected"}`, sedangkan database yang belum
    tersedia atau tabel autentikasi belum dibuat memberi HTTP 503 tanpa
    mematikan health check dasar. Lihat log backend Vercel untuk penyebab
-   koneksi; respons health check tidak membocorkan detail koneksi.
+   koneksi. Respons health check menyertakan kategori `reason` tanpa
+   membocorkan host atau kredensial: `configuration`, `schema`, `credentials`,
+   `database-name`, `dns`, `network-timeout`, `network-access`, `tls`,
+   `protocol`, atau `unknown`.
 6. Di Vercel, import repository dan pilih root directory `frontend`
    (framework Vite, build command `npm run build`, output directory `dist`).
    Isi `VITE_API_URL` dengan origin backend (tanpa `/api` dan tanpa slash di
