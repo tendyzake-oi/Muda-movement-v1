@@ -7,6 +7,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:3001',
+      'https://muda-movement-v1-backend.vercel.app': {
+        target: 'https://muda-movement-v1-backend.vercel.app',
+        changeOrigin: true,
+      }
     },
   },
 })
