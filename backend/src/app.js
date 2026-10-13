@@ -13,6 +13,29 @@ const allowedOrigins = (
 
 const app = express()
 
+function logServerError(prefix, error) {
+  const code = typeof error?.code === 'string' ? error.code : error?.name || 'UNKNOWN'
+  let message = typeof error?.message === 'string' ? error.message : ''
+
+  for (const name of ['DB_PASSWORD', 'JWT_SECRET', 'SMTP_PASSWORD']) {
+    const secret = process.env[name]
+    if (secret) message = message.replaceAll(secret, '[REDACTED]')
+  }
+
+  console.error(`${prefix} (${code})${message ? `: ${message}` : '.'}`)
+}
+
+function isDatabaseError(error) {
+  const code = typeof error?.code === 'string' ? error.code : ''
+  return code === 'DATABASE_CONFIG_ERROR'
+    || code === 'DATABASE_SCHEMA_ERROR'
+    || code === 'ER_ACCESS_DENIED_ERROR'
+    || code === 'ER_BAD_DB_ERROR'
+    || code === 'ER_NO_SUCH_TABLE'
+    || code.startsWith('PROTOCOL_')
+    || ['ECONNREFUSED', 'ECONNRESET', 'ETIMEDOUT', 'EHOSTUNREACH', 'ENETUNREACH', 'ENOTFOUND'].includes(code)
+}
+
 app.disable('x-powered-by')
 app.use(cors({
   origin(origin, callback) {
@@ -37,8 +60,7 @@ app.get(['/healthz/database', '/api/healthz/database'], async (_req, res) => {
     await checkDatabaseConnection()
     return res.json({ status: 'ok', database: 'connected' })
   } catch (error) {
-    const code = typeof error?.code === 'string' ? error.code : error?.name || 'UNKNOWN'
-    console.error(`Pemeriksaan database gagal (${code}).`)
+    logServerError('Pemeriksaan database gagal', error)
     return res.status(503).json({ status: 'error', database: 'unavailable' })
   }
 })
@@ -56,13 +78,13 @@ app.use((_req, res) => {
 app.use((error, _req, res, _next) => {
   const status = Number.isInteger(error.status) && error.status >= 400 && error.status < 600
     ? error.status
-    : 500
-  if (status === 500) {
-    const code = typeof error?.code === 'string' ? error.code : error?.name || 'UNKNOWN'
-    console.error(`Kesalahan server (${code}).`)
-  }
+    : isDatabaseError(error) ? 503 : 500
+  if (status === 500) logServerError('Kesalahan server', error)
+  if (status === 503) logServerError('Database tidak tersedia', error)
   res.status(status).json({
-    error: status === 500 ? 'Terjadi kesalahan pada server.' : error.message,
+    error: status === 503
+      ? 'Database belum tersedia. Periksa konfigurasi dan koneksi database backend.'
+      : status === 500 ? 'Terjadi kesalahan pada server.' : error.message,
   })
 })
 

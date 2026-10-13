@@ -103,18 +103,27 @@ Sebelum deploy:
    `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, dan `SMTP_FROM`.
    Simpan rahasia di Environment Variables project backend Vercel; jangan
    masukkan rahasia ke source frontend atau repository.
+   Ambil `DB_HOST`, `DB_PORT`, `DB_USER`, dan nama database dari detail koneksi
+   TiDB yang sama dengan koneksi yang sudah diuji lokal. Port TiDB Cloud sering
+   `4000`; jangan memakai `3306` kecuali memang port yang ditampilkan cluster.
+   Setelah mengubah environment variables, deploy ulang project backend.
 4. `DB_SSL_CA` opsional untuk CA PEM jika cluster mensyaratkannya. Koneksi
    `DB_SSL=true` memverifikasi sertifikat server dan menggunakan TLS minimal
    1.2; jangan menonaktifkan verifikasi untuk mengatasi masalah koneksi.
    Atur izin jaringan TiDB agar menerima koneksi dari backend hosting. Jika
-   platform menyediakan outbound IP statis, batasi allowlist TiDB ke IP itu;
-   jangan membuka akses database ke semua alamat jika bisa dihindari.
+   koneksi dari lokal berhasil tetapi `/api/healthz/database` di Vercel masih
+   HTTP 503, periksa ulang environment variables di project backend Vercel,
+   port/host cluster, dan allowlist jaringan TiDB untuk koneksi keluar Vercel.
+   Jika platform menyediakan outbound IP statis, batasi allowlist TiDB ke IP
+   itu; jangan membuka akses database ke semua alamat jika bisa dihindari.
 5. Deploy backend dengan `cd backend` lalu `npx vercel --prod`. Tes
    `https://<domain-backend>/api/healthz` sampai mendapat respons
    `{"status":"ok"}`. Tes koneksi TiDB secara terpisah melalui
    `GET /api/healthz/database`; sukses memberi
    `{"status":"ok","database":"connected"}`, sedangkan database yang belum
-   tersedia memberi HTTP 503 tanpa mematikan health check dasar.
+   tersedia atau tabel autentikasi belum dibuat memberi HTTP 503 tanpa
+   mematikan health check dasar. Lihat log backend Vercel untuk penyebab
+   koneksi; respons health check tidak membocorkan detail koneksi.
 6. Di Vercel, import repository dan pilih root directory `frontend`
    (framework Vite, build command `npm run build`, output directory `dist`).
    Isi `VITE_API_URL` dengan origin backend (tanpa `/api` dan tanpa slash di
