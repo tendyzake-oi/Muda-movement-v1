@@ -3,9 +3,9 @@ import app from './app.js'
 import pool from './config/database.js'
 
 const port = Number(process.env.PORT || 3001)
-const jwtSecret = process.env.JWT_SECRET || 'JwtSecretHarusDiisiMinimal32Karakter'
+const jwtSecret = process.env.JWT_SECRET
 
-if (jwtSecret.length < 32) {
+if (!jwtSecret || jwtSecret.length < 32) {
   throw new Error('JWT_SECRET wajib diisi dengan minimal 32 karakter.')
 }
 if (!Number.isInteger(port) || port < 1 || port > 65535) {

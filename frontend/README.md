@@ -4,11 +4,14 @@ React 19 + Vite. Tema terang/gelap, responsif, tanpa library UI tambahan.
 
 ## Menjalankan
 
+Jalankan perintah dari root repository:
+
 ```bash
 npm install
-npm run dev      # mode pengembangan
-npm run build    # build produksi → folder dist/
-npm run lint     # cek kualitas kode
+npm run dev:frontend   # mode pengembangan frontend
+npm run dev:backend    # jalankan backend di terminal lain
+npm run build          # build frontend produksi
+npm run lint           # cek kualitas frontend
 ```
 
 ## Login member dan backend
@@ -32,20 +35,16 @@ port 3001; konfigurasi proxy tersebut dipertahankan.
    `node -e "console.log(require('node:crypto').randomBytes(64).toString('hex'))"`)
    dan `WHATSAPP_GROUP_URL` di `backend/.env`.
    `CORS_ORIGIN` dapat berisi beberapa origin dipisahkan koma saat deployment.
-3. Di terminal pertama:
+3. Di terminal pertama dari root repository:
 
    ```bash
-   cd backend
-   npm install
-   npm run dev
+   npm run dev:backend
    ```
 
 4. Di terminal kedua:
 
    ```bash
-   cd frontend
-   npm install
-   npm run dev
+   npm run dev:frontend
    ```
 
    Buka `http://localhost:5173/login`, pilih **Daftar di sini**, isi nama, email,
@@ -66,8 +65,20 @@ Semua akun memiliki satu peran, `user`. API autentikasi dan pengelolaan akun:
 menanam tautan grup ke banyak file frontend. Respons autentikasi hanya memuat
 nama, email, peran `user`, dan tanggal bergabung—tidak pernah `password_hash`.
 
-Untuk deployment, isi `CORS_ORIGIN` dengan origin frontend Vercel, serta isi
-credential TiDB dan secret JWT melalui environment variables penyedia backend.
+### Deployment Vercel
+
+Atur Vercel **Root Directory** ke root repository (bukan `frontend`). `vercel.json`
+membangun `frontend/dist`, meneruskan `/api/*` ke Vercel Function di `api/`, dan
+menyajikan aplikasi React untuk refresh `/login` dan `/dashboard`. Backend tidak
+memerlukan server terpisah atau `app.listen()` di production.
+
+Tambahkan `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_SSL=true`,
+dan `JWT_SECRET` (minimal 32 karakter acak) pada Vercel Project Settings →
+Environment Variables untuk Production. Tambahkan `WHATSAPP_GROUP_URL` bila
+ingin mengubah tautan komunitas. `CORS_ORIGIN` hanya diperlukan untuk origin
+frontend tambahan/custom; origin Vercel dikenali otomatis. Gunakan host dan port
+SQL publik TiDB Cloud, bukan host lokal atau port SQL editor. TLS memverifikasi
+sertifikat server; jangan menonaktifkannya untuk mengatasi error koneksi.
 Jangan unggah atau commit file `.env`.
 
 ## Susunan halaman

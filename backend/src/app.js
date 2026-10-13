@@ -1,9 +1,19 @@
 import cors from 'cors'
 import express from 'express'
+import pool from './config/database.js'
 import authRoutes from './routes/authRoutes.js'
 
-const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
-  .split(',')
+const deploymentOrigins = [
+  process.env.VERCEL_URL,
+  process.env.VERCEL_PROJECT_PRODUCTION_URL,
+]
+  .filter(Boolean)
+  .map((origin) => origin.startsWith('http') ? origin : `https://${origin}`)
+
+const allowedOrigins = [
+  ...(process.env.CORS_ORIGIN || 'http://localhost:5173').split(','),
+  ...deploymentOrigins,
+]
   .map((origin) => origin.trim())
   .filter(Boolean)
 
@@ -19,10 +29,20 @@ app.use(cors({
     error.status = 403
     return callback(error)
   },
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }))
 app.use(express.json({ limit: '10kb' }))
+
+app.get('/api/health', async (_req, res) => {
+  try {
+    await pool.query('SELECT 1')
+    return res.json({ status: 'ok', database: 'connected' })
+  } catch (error) {
+    console.error('Health check database failed:', error.code || error.name || 'UNKNOWN')
+    return res.status(503).json({ status: 'error', database: 'unavailable' })
+  }
+})
 
 app.get('/api/config', (_req, res) => {
   res.json({ whatsappGroupUrl: process.env.WHATSAPP_GROUP_URL?.trim() || null })
