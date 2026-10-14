@@ -6,7 +6,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'https://muda-movementv1.onrender.com',
+      '/api': { 
+        target: 'https://muda-movementv1.onrender.com',
+        changeOrigin: true,
+      },
     },
   },
 })
