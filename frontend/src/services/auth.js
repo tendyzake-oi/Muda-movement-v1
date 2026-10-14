@@ -1,4 +1,4 @@
-const productionApiUrl = 'https://muda-movement-v1-backend.vercel.app'
+const productionApiUrl = 'https://muda-movementv1.onrender.com'
 const apiBaseUrl = (import.meta.env.VITE_API_URL || (import.meta.env.PROD ? productionApiUrl : ''))
   .replace(/\/+$/, '')
 
