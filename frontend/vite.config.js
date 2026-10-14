@@ -9,6 +9,7 @@ export default defineConfig({
       '/api': { 
         target: 'https://muda-movementv1.onrender.com',
         changeOrigin: true,
+        secure: false,
       },
     },
   },
